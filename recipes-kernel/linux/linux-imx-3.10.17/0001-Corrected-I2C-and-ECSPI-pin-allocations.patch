@@ -1,0 +1,190 @@
+From 2dd44c1621f0f9dad85346580e3c1ab6eb1aeb33 Mon Sep 17 00:00:00 2001
+From: clivetaylor <clive.taylor@megger.com>
+Date: Wed, 28 Oct 2015 11:34:45 +0000
+Subject: [PATCH] Corrected I2C and ECSPI pin allocations
+
+---
+ arch/arm/boot/dts/imx6m300-qdl.dtsi |  9 ++++++---
+ arch/arm/boot/dts/imx6m300.dtsi     | 39 ++++++++++++++++++++++++++++---------
+ 2 files changed, 36 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6m300-qdl.dtsi b/arch/arm/boot/dts/imx6m300-qdl.dtsi
+index 753062a..b404f7d 100644
+--- a/arch/arm/boot/dts/imx6m300-qdl.dtsi
++++ b/arch/arm/boot/dts/imx6m300-qdl.dtsi
+@@ -1132,23 +1132,25 @@
+ 	};
+ 
+ 	ecspi1 {
++		/*
+ 		pinctrl_ecspi1_cs_1: ecspi1_cs_grp-1 {
+ 			fsl,pins = <
+ 				MX6QDL_PAD_EIM_D19__GPIO3_IO19 0x80000000
+ 			>;
+ 		};
++		 */
+ 
+ 		pinctrl_ecspi1_1: ecspi1grp-1 {
+ 			fsl,pins = <
+-				MX6QDL_PAD_EIM_D17__ECSPI1_MISO 0x100b1
+-				MX6QDL_PAD_EIM_D18__ECSPI1_MOSI 0x100b1
+ 				MX6QDL_PAD_EIM_D16__ECSPI1_SCLK 0x100b1
+ 				MX6QDL_PAD_GPIO_19__ECSPI1_RDY  0x100b1
++				MX6QDL_PAD_EIM_D18__ECSPI1_MOSI 0x100b1
++				MX6QDL_PAD_EIM_D17__ECSPI1_MISO 0x100b1
+ 				MX6QDL_PAD_EIM_D19__ECSPI1_SS1  0x100b1
+ 				MX6QDL_PAD_EIM_D24__ECSPI1_SS2  0x100b1
+ 			>;
+ 		};
+-
++		/*
+ 		pinctrl_ecspi1_2: ecspi1grp-2 {
+ 			fsl,pins = <
+ 				MX6QDL_PAD_KEY_COL1__ECSPI1_MISO 0x100b1
+@@ -1156,6 +1158,7 @@
+ 				MX6QDL_PAD_KEY_COL0__ECSPI1_SCLK 0x100b1
+ 			>;
+ 		};
++		 */
+ 	};
+ 
+ 	ecspi3 {
+diff --git a/arch/arm/boot/dts/imx6m300.dtsi b/arch/arm/boot/dts/imx6m300.dtsi
+index 0b4eeb0..89cf139 100644
+--- a/arch/arm/boot/dts/imx6m300.dtsi
++++ b/arch/arm/boot/dts/imx6m300.dtsi
+@@ -42,6 +42,20 @@
+ 			regulator-boot-on;
+ 			regulator-always-on;
+ 		};
++		
++		reg_usb_h1_vbus: reg_usb_h {
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-boot-on;
++			regulator-always-on;
++		};
++		
++		reg_usb_otg_vbus: reg_usb_o {
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-boot-on;
++			regulator-always-on;
++		};
+ 	};
+ 		
+ 	hannstar_cabc {
+@@ -185,13 +199,15 @@
+ 		compatible = "fsl,mxc_v4l2_output";
+ 		status = "okay";
+ 	};
+-
++	
++	/*
+ 	mipi_dsi_reset: mipi-dsi-reset {
+ 		compatible = "gpio-reset";
+ 		reset-gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
+ 		reset-delay-us = <50>;
+ 		#reset-cells = <0>;
+ 	};
++	*/
+ };
+ 
+ &audmux {
+@@ -207,12 +223,14 @@
+ };
+ 
+ &ecspi1 {
++	/*
+ 	fsl,spi-num-chipselects = <1>;
+ 	cs-gpios = <&gpio4 9 0>;
++	 */
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_ecspi1_2>;
++	pinctrl-0 = <&pinctrl_ecspi1_1>;
+ 	status = "okay";
+-
++	/*
+ 	flash: m25p80@0 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -220,6 +238,7 @@
+ 		spi-max-frequency = <20000000>;
+ 		reg = <0>;
+ 	};
++	 */
+ };
+ 
+ &fec {
+@@ -246,7 +265,7 @@
+ &i2c1 {
+ 	clock-frequency = <100000>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_i2c1_2>;
++	pinctrl-0 = <&pinctrl_i2c1_1>;
+ 	status = "okay";
+ 
+ 	codec: sgtl5000@14 {
+@@ -261,14 +280,14 @@
+ &i2c3 {
+         clock-frequency = <100000>;
+         pinctrl-names = "default";
+-        pinctrl-0 = <&pinctrl_i2c3_2>;
++        pinctrl-0 = <&pinctrl_i2c3_1>;
+         status = "okay";
+ };
+ 
+ &i2c4 {
+         clock-frequency = <100000>;
+         pinctrl-names = "default";
+-        pinctrl-0 = <&pinctrl_i2c4_2>;
++        pinctrl-0 = <&pinctrl_i2c4_1>;
+         status = "okay";
+ };
+ 
+@@ -280,7 +299,7 @@
+ 		pinctrl_hog_1: hoggrp-1 {
+ 			fsl,pins = <
+ 				MX6QDL_PAD_GPIO_4__GPIO1_IO04   0x80000000
+-				MX6QDL_PAD_GPIO_5__GPIO1_IO05   0x80000000
++				//MX6QDL_PAD_GPIO_5__GPIO1_IO05   0x80000000
+ 				MX6QDL_PAD_NANDF_D0__GPIO2_IO00 0x80000000
+ 				MX6QDL_PAD_NANDF_D1__GPIO2_IO01 0x80000000
+ 				MX6QDL_PAD_NANDF_D2__GPIO2_IO02 0x80000000
+@@ -289,7 +308,7 @@
+ 				MX6QDL_PAD_NANDF_CLE__GPIO6_IO07 0x80000000
+ 				MX6QDL_PAD_GPIO_0__CCM_CLKO1    0x130b0
+ 				MX6QDL_PAD_NANDF_CS2__GPIO6_IO15 0x80000000
+-				MX6QDL_PAD_NANDF_CS3__GPIO6_IO16 0x80000000
++				//MX6QDL_PAD_NANDF_CS3__GPIO6_IO16 0x80000000
+ 				MX6QDL_PAD_EIM_D26__GPIO3_IO26 0x80000000
+ 				MX6QDL_PAD_EIM_CS1__GPIO2_IO24 0x80000000
+ 				//MX6QDL_PAD_ENET_RXD0__GPIO1_IO27 0x80000000
+@@ -303,7 +322,7 @@
+ 				MX6QDL_PAD_EIM_D16__GPIO3_IO16 0x80000000
+ 				MX6QDL_PAD_EIM_DA9__GPIO3_IO09 0x80000000
+ 				MX6QDL_PAD_GPIO_4__GPIO1_IO04 0x80000000
+-				MX6QDL_PAD_GPIO_5__GPIO1_IO05 0x80000000
++				//MX6QDL_PAD_GPIO_5__GPIO1_IO05 0x80000000
+ 				MX6QDL_PAD_EIM_D29__GPIO3_IO29 0x80000000
+ 				MX6QDL_PAD_SD3_RST__GPIO7_IO08 0x80000000
+ 				MX6QDL_PAD_GPIO_9__GPIO1_IO09 0x80000000
+@@ -332,6 +351,7 @@
+ 	lanes = <2>;
+ };
+ 
++/*
+ &mipi_dsi {
+ 	dev_id = <0>;
+ 	disp_id = <1>;
+@@ -340,6 +360,7 @@
+ 	resets = <&mipi_dsi_reset>;
+ 	status = "disabled";
+ };
++*/
+ 
+ &pcie {
+ 	power-on-gpio = <&gpio3 19 0>;
+-- 
+1.9.1
+
